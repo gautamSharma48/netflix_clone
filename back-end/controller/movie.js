@@ -67,7 +67,27 @@ const getAllMovie = async (req, res) => {
     res.status(500).json(err);
   }
 };
-const randomMovie = () => {};
+
+const randomMovie = () => {
+  const type = req.query.type;
+  let movie;
+  try {
+    if (type === "series") {
+      movieSchema.aggregate([
+        { $match: { isSeries: true } },
+        { $sample: { size: 1 } },
+      ]);
+    }
+    else {
+      movieSchema.aggregate([
+        { $match: { isSeries: false } },
+        { $sample: { size: 1 } },
+      ]);
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
 module.exports = {
   createMovie,
@@ -76,4 +96,5 @@ module.exports = {
   randomMovie,
   getMovie,
   getAllMovie,
+  randomMovie
 };
